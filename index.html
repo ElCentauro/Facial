@@ -86,7 +86,7 @@
       flex-wrap: wrap;
     }
     .btn-row button {
-      flex: 1 1 30%;
+      flex: 1 1 30%; /* Tres botones en línea */
       font-size: 1rem;
       padding: 12px;
       border-radius: 4px;
@@ -349,6 +349,7 @@
   
   <!-- Encabezado con Logo y Título -->
   <header class="header">
+    <!-- Asegúrate de que la imagen Centauro3.png esté en la misma carpeta que este archivo HTML o ajusta la ruta según corresponda -->
     <img src="Centauro3.png" alt="Logo de El Centauro" loading="lazy">
     <h1>Datos Actuales Open Key Residentes Barrio El Centauro</h1>
   </header>
@@ -418,7 +419,7 @@
       fetch(excelUrl)
         .then(response => {
           if (!response.ok) {
-            throw new Error(\`No se pudo acceder al archivo Excel. Código: \${response.status}\`);
+            throw new Error(`No se pudo acceder al archivo Excel. Código: ${response.status}`);
           }
           return response.arrayBuffer();
         })
@@ -657,6 +658,7 @@
       
       let dataToExport = [];
       
+      // Armar la estructura de registros con la nueva columna "Parentezco" (quedando en blanco)
       if (currentUserRole === "lider") {
         // Registro del líder
         dataToExport.push({
@@ -711,9 +713,9 @@
         });
       }
       
-      // Agregar las 3 filas con el mensaje final
+      // Agregar las 3 filas con el mensaje, cada una en su propia fila
       dataToExport.push({
-        "Rol": "Devolver al Administrador si quieres modificar algo",
+        "Rol": "Devolver al Administrador si quieres modificarlo algo",
         "Documento": "",
         "Nombre y Apellido": "",
         "Email": "",
@@ -733,7 +735,7 @@
         "Parentezco": ""
       });
       dataToExport.push({
-        "Rol": "Si quieres dar de baja un dependiente marcar la fila con rojo",
+        "Rol": "Si quieres dar de baja un dependiente marcarlo la fila con rojo",
         "Documento": "",
         "Nombre y Apellido": "",
         "Email": "",
@@ -743,18 +745,16 @@
         "Parentezco": ""
       });
       
-      // Crear un nuevo libro de Excel y hoja
+      // Crear un nuevo libro de Excel y hoja de trabajo
       let wb = XLSX.utils.book_new();
-      let ws = XLSX.utils.json_to_sheet(dataToExport, {
-        header: ["Rol", "Documento", "Nombre y Apellido", "Email", "Lote", "App", "Líder", "Parentezco"]
-      });
+      let ws = XLSX.utils.json_to_sheet(dataToExport, {header: ["Rol", "Documento", "Nombre y Apellido", "Email", "Lote", "App", "Líder", "Parentezco"]});
       
-      // Definir ancho de columna A
+      // Definir el ancho de la columna A en 35 caracteres
       ws['!cols'] = [{ wch: 35 }];
       
       XLSX.utils.book_append_sheet(wb, ws, "Consulta");
       
-      // Generar nombre de archivo
+      // Generar el nombre del archivo usando el número de documento consultado
       let fileName = `Consulta_${currentUserData.documento}.xlsx`;
       XLSX.writeFile(wb, fileName);
     }
@@ -772,11 +772,12 @@
     // Función para generar el menú acordeón dinámicamente
     function generarMenuAcordeon(tipo) {
       const accordion = document.getElementById('accordionExample');
-      accordion.innerHTML = ''; // Limpiar
+      accordion.innerHTML = ''; // Limpiar contenido previo
       
       let items = [];
       
       if (tipo === 'lider') {
+        // Menú acordeón completo para líderes
         items = [
           {
             id: 'collapseOne',
@@ -806,11 +807,7 @@
             id: 'collapseThree',
             header: '3. Cómo sacarme la selfie',
             body: `
-              1-Accede a la App: Abre la aplicación Open Key en tu dispositivo.<br><br>
-              2-Selecciona el Botón de Selfie: Busca y pulsa el botón que dice "Selfie".<br><br>
-              3-Sigue las Indicaciones: Continúa con los pasos que te va indicando la app para tomar la foto de manera correcta.<br><br>
-              4-Asegúrate de la Calidad: Procura seguir todas las recomendaciones para que el reconocimiento facial funcione adecuadamente.<br><br>
-              <a href="Selfie.mp4" target="_blank" rel="noopener noreferrer">Ver Video</a>
+              Aún la posibilidad de sacarse la selfie no está habilitado. Tendrás el botón en la app de Open Key pero grisado; se te avisará cuando sea el momento.
             `
           },
           {
@@ -829,6 +826,7 @@
           }
         ];
       } else if (tipo === 'dependiente') {
+        // Menú acordeón reducido para dependientes
         items = [
           {
             id: 'collapseDepOne',
@@ -856,11 +854,12 @@
         ];
       }
       
-      // Generar los ítems
+      // Generar los ítems del acordeón
       items.forEach(item => {
         const accordionItem = document.createElement('div');
         accordionItem.classList.add('accordion-item');
         
+        // Encabezado
         const header = document.createElement('h2');
         header.classList.add('accordion-header');
         header.id = `heading-${item.id}`;
@@ -877,6 +876,7 @@
         header.appendChild(button);
         accordionItem.appendChild(header);
         
+        // Contenido
         const collapseDiv = document.createElement('div');
         collapseDiv.id = item.id;
         collapseDiv.classList.add('accordion-collapse', 'collapse');
@@ -899,7 +899,7 @@
     
     // Inicializar Acordeón con Bootstrap
     function inicializarAcordeon() {
-      // Bootstrap maneja automáticamente el acordeón
+      // Bootstrap maneja automáticamente el comportamiento del acordeón
     }
     
     // Inicializar Modo Oscuro
@@ -907,6 +907,7 @@
       const toggleDarkMode = document.getElementById('toggleDarkMode');
       toggleDarkMode.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
+        // Cambiar ícono
         const icon = toggleDarkMode.querySelector('i');
         if (document.body.classList.contains('dark-mode')) {
           icon.classList.remove('bi-moon');
@@ -918,7 +919,7 @@
       });
     }
     
-    // Service Worker (opcional)
+    // Service Worker para Soporte Offline
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
